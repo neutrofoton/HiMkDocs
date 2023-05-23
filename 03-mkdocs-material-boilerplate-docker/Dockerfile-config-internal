@@ -1,0 +1,29 @@
+FROM python:3.10-slim-buster
+
+# LABEL maintainer="peaceiris"
+
+# Install requirements
+COPY ./requirements.txt /root
+COPY ./mkdocs-config.yml /root
+
+WORKDIR /root
+RUN python3 -m pip install --no-cache-dir --upgrade pip && \
+    python3 -m pip install --no-cache-dir -r ./requirements.txt && \
+    python3 -m pip check
+
+# Expose MkDocs development server port
+EXPOSE 8000
+
+RUN ls -alh
+CMD ["ls", "l"]
+
+RUN find / -type f -name 'mkdocs'
+
+# Start development server by default
+# CMD ["mkdocs", "serve", "--dev-addr=0.0.0.0:8000"]
+
+# configuration pass at docker command (external param)
+# ENTRYPOINT ["/usr/local/bin/mkdocs"]
+
+# using local config which is copied while building docker image (internal param)
+ENTRYPOINT ["/usr/local/bin/mkdocs", "serve", "--config-file=/root/mkdocs-config.yml"]
